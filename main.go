@@ -11,6 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/ethclient/gethclient"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/joho/godotenv"
 	"github.com/opefago/bot-tave/utils"
 )
 
@@ -19,6 +20,12 @@ var (
 )
 
 func init() {
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	NodeEndpoint = os.Getenv("NODE_ENDPOINT")
 }
 
@@ -36,10 +43,9 @@ func main() {
 	cntxt := context.Background()
 	txnsHash := make(chan common.Hash)
 
-	err = ListenMemPool(cntxt, client, txnsHash)
+	go ListenMemPool(cntxt, client, txnsHash)
 
-	if err != nil {
-		log.Fatal(err)
+	for {
 	}
 
 }
