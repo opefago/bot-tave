@@ -12,11 +12,15 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient/gethclient"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/joho/godotenv"
+	"github.com/opefago/bot-tave/exchange/base"
+	"github.com/opefago/bot-tave/exchange/poloniex"
 	"github.com/opefago/bot-tave/utils"
 )
 
 var (
-	NodeEndpoint = ""
+	NodeEndpoint     = ""
+	SampleOutputFile = "Poloniex.json"
+	BinanceBaseUrl   = ""
 )
 
 func init() {
@@ -43,11 +47,33 @@ func main() {
 	cntxt := context.Background()
 	txnsHash := make(chan common.Hash)
 
-	go ListenMemPool(cntxt, client, txnsHash)
+	var exchange base.Exchange
+	exchange = poloniex.New()
+
+	// err = exchange.StoreTriangularPair()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// go ListenMemPool(cntxt, client, txnsHash)
+
+	exchange.RunExchange(cntxt)
+	// fmt.Println()
+	// fmt.Println("======================================================")
+	// fmt.Println()
+
+	// exchange = binance.New()
+
+	// err = exchange.StoreTriangularPair()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	_ = cntxt
+	_ = txnsHash
 
 	for {
 	}
-
 }
 
 func ListenMemPool(ctx context.Context, client *ethclient.Client, channel chan common.Hash) error {
